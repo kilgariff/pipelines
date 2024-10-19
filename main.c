@@ -13,14 +13,6 @@ int main() {
 
     Pipeline * pipeline = pipelines;
     while (pipeline->valid) {
-        printf("Pipeline: %s\n", pipeline->workdir);
-
-        char  ** path = pipeline->watch_paths;
-        while (*path != NULL) {
-            printf("Watch path: %s\n", *path);
-            path++;
-        }
-
         pipeline_start(pipeline);
         ++pipeline;
     }
