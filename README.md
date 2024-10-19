@@ -6,7 +6,7 @@ It was developed to enable fast iteration when developing command-line programs 
 Works well in conjunction with GNU Make.
 
 # How it works
-A `Pipefile` is created in the working directory of a project. It defines a series of pipelines in the YAML format:
+The user creates a `Pipefile` in the top-level directory of a project. It defines a series of pipelines in the YAML format:
 
 ```
 pipelines:
