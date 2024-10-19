@@ -45,8 +45,8 @@ typedef enum {
 
 void pipeline_free(Pipeline * pipeline);
 int pipeline_start(Pipeline * pipeline);
-int pipeline_wait_paths_modified(char const * const * paths);
+int pipeline_monitor(Pipeline * pipeline);
 int pipeline_run_cmd(char const * command, PIPELINES_RUN_FLAGS flags);
-int pipeline_wait_all_finished();
+int pipeline_wait_all_finished(Pipeline * pipelines);
 
 #endif

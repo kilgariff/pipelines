@@ -5,7 +5,7 @@
 
 char const * pipelines_strerror(PIPELINES_ERROR error);
 
-int pipeline_wait_paths_modified(char const * const * paths) {
+int pipeline_monitor(Pipeline * pipeline) {
 
     int res = 0;
 
@@ -18,7 +18,7 @@ int pipeline_wait_paths_modified(char const * const * paths) {
 
     // Calculate the number of paths:
     int path_count = 0;
-    char const * const * path = paths;
+    char ** path = pipeline->watch_paths;
     while (*path++) {
         ++path_count;
     }
@@ -33,17 +33,18 @@ int pipeline_wait_paths_modified(char const * const * paths) {
     // Add watch descriptors:
     int * wd = watches;
     for (int i = 0; i < path_count; ++i) {
-        wd[i] = inotify_add_watch(fd, paths[i], IN_CLOSE_WRITE);
-        if (wd < 0) {
+        wd[i] = inotify_add_watch(fd, pipeline->watch_paths[i], IN_CLOSE_WRITE);
+        if (wd[i] < 0) {
+            printf("Error: %s\n", strerror(errno));
             res = wd[i];
             goto exit;
         }
     }
 
     // Output log message stating that we're watching:
-    printf("\n>> Watching ");
+    printf("(%d) >> Pipeline %s monitoring ", getpid(), pipeline->name);
     for (int i = 0; i < path_count; ++i) {
-        printf("\"%s\"", paths[i]);
+        printf("\"%s\"", pipeline->watch_paths[i]);
         if (i < path_count - 1) printf(", ");
     }
     printf(" for changes\n");
@@ -60,6 +61,7 @@ int pipeline_wait_paths_modified(char const * const * paths) {
 exit:
     FREE(watches);
     close(fd);
+    return res;
 }
 
 int pipeline_run_cmd(char const * command, PIPELINES_RUN_FLAGS flags) {
@@ -148,17 +150,30 @@ int pipeline_start(Pipeline * pipeline) {
         case 0: {
 
             chdir(pipeline->workdir);
-            while (pipeline_wait_paths_modified((char const * const *) pipeline->watch_paths) == 0) {
+            while (pipeline_monitor(pipeline) == 0) {
                 pipeline_run_cmd(pipeline->cmd, PIPELINES_RUN_IN_SHELL);
             }
-            break;
+            printf(">> Error monitoring %s\n", pipeline->name);
+            exit(1);
         }
     }
     return 0;
 }
 
-int pipeline_wait_all_finished() {
+int pipeline_wait_all_finished(Pipeline * pipelines) {
+
+    int count = 0;
+    while (pipelines->valid) {
+        ++pipelines;
+        ++count;
+    }
+
+    int result = 0;
     int status = 0;
-    wait(&status);
-    return status;
+
+    while (count--) {
+        wait(&status);
+        result += status;
+    }
+    return result;
 }

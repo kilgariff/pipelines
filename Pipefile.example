@@ -1,6 +1,6 @@
 pipelines:
     - mkdcdisc:
-        workdir: "/opt/toolchains/dc/mkdcdisc/build/mkdcdisc"
+        workdir: "/opt/toolchains/dc/mkdcdisc"
         watch_paths: "src"
         cmd: "meson compile -C build"
     

@@ -17,7 +17,7 @@ int main() {
         ++pipeline;
     }
 
-    int result = pipeline_wait_all_finished();
+    int result = pipeline_wait_all_finished(pipelines);
     FREE(pipelines);
     return result;
 }
