@@ -1,0 +1,18 @@
+pipelines:
+    - mkdcdisc:
+        workdir: "/opt/toolchains/dc/mkdcdisc/build/mkdcdisc"
+        watch_paths: "src"
+        cmd: "meson compile -C build"
+    
+    - libisofs:
+        workdir: "/home/ross/libisofs"
+        watch_paths: "libisofs"
+        cmd: "make"
+
+    - iso-tools:
+        workdir: "/home/ross/iso-tools"
+        watch_paths:
+            - "/opt/toolchains/dc/mkdcdisc/build/mkdcdisc"
+            - "/home/ross/libisofs/install"
+            - "."
+        cmd: "make run"
