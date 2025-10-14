@@ -33,4 +33,4 @@ Running `pipelines` will read the `Pipefile` from the working directory and star
 
 # Contributing
 
-This tool is something I threw together quickly because it solved an immediate problem I had. There are rough endges and missing features. Please feel free to file Issues, submit Pull Requests or get in touch with me at https://ross.codes/ if you have any questions.
+This tool is something I threw together quickly because it solved an immediate problem I had. There are rough edges and missing features. Please feel free to file Issues, submit Pull Requests or get in touch with me at https://ross.codes/ if you have any questions.
